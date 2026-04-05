@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import {createElement} from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 
 function getEventDuration(dateFrom, dateTo) {
   const totalMinutes = dayjs(dateTo).diff(dayjs(dateFrom), 'minute');
@@ -78,30 +78,27 @@ function createEventPointTemplate(point, destinations, offers) {
   );
 }
 
-export default class EventPointView {
-  #element = null;
+export default class EventPointView extends AbstractView {
   #point = null;
   #destinations = null;
   #offers = null;
+  #handleRollupClick = null;
 
-  constructor({point, destinations, offers}) {
+  constructor({point, destinations, offers, onRollupClick}) {
+    super();
     this.#point = point;
     this.#destinations = destinations;
     this.#offers = offers;
+    this.#handleRollupClick = onRollupClick;
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#rollupClickHandler);
   }
 
-  getTemplate() {
+  get template() {
     return createEventPointTemplate(this.#point, this.#destinations, this.#offers);
   }
 
-  getElement() {
-    if (!this.#element) {
-      this.#element = createElement(this.getTemplate());
-    }
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
-  }
+  #rollupClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleRollupClick();
+  };
 }
