@@ -1,8 +1,11 @@
 import {render, replace, RenderPosition} from '../framework/render.js';
+import {FilterType} from '../const.js';
+import {generateFilters} from '../mock/filter.js';
 import TripInfoView from '../view/trip-info.js';
 import FilterView from '../view/filter.js';
 import SortView from '../view/sort.js';
 import EventListView from '../view/event-list.js';
+import ListEmptyView from '../view/list-empty.js';
 import EditPointView from '../view/edit-point.js';
 import EventPointView from '../view/event-point.js';
 
@@ -24,7 +27,13 @@ export default class BoardPresenter {
     const points = this.#pointsModel.points;
 
     render(new TripInfoView(), this.#tripMainContainer, RenderPosition.AFTERBEGIN);
-    render(new FilterView(), this.#filterContainer);
+    render(new FilterView({filters: generateFilters(points)}), this.#filterContainer);
+
+    if (points.length === 0) {
+      render(new ListEmptyView({filterType: FilterType.EVERYTHING}), this.#tripEventsContainer);
+      return;
+    }
+
     render(new SortView(), this.#tripEventsContainer);
     render(this.#eventListComponent, this.#tripEventsContainer);
 
