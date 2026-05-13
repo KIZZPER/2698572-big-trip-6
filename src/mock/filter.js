@@ -1,4 +1,3 @@
-import {FilterType} from '../const.js';
 import {filter} from '../utils.js';
 
 function generateFilters(points) {
